@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Kurly</string>
+    <string name="base_url">https://kurly.com/</string>
 </resources>
