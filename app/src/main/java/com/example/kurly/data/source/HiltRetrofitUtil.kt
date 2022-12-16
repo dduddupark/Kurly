@@ -5,6 +5,7 @@ import com.example.kurly.BuildConfig
 import com.example.kurly.R
 import com.example.kurly.data.remote.NetworkDataSource
 import com.example.kurly.data.remote.NetworkService
+import com.example.kurly.data.remote.RemoteDataSource
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kurly.android.mockserver.MockInterceptor
@@ -30,11 +31,11 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
 /**
- * BCMProject
- * Class: RetrofitUtil
- * Created by 박수연 on 2021-04-21.
+ * Kurly
+ * Class: NetworkModule
+ * Created by bluepark on 2022/12/13.
  *
- * Description: 통신 Util(ViewModel 에서 호출해서 사용)
+ * Description:
  */
 
 @InstallIn(SingletonComponent::class)
@@ -44,10 +45,9 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideDefaultRepository(
-        @ApplicationContext context: Context,
         remoteDataSource: RemoteDataSource
     ): DefaultRepository {
-        val repository = DefaultRepository(context, remoteDataSource)
+        val repository = DefaultRepository(remoteDataSource)
         Timber.d("hrepository = $repository")
         return repository
     }

@@ -5,11 +5,11 @@ import retrofit2.HttpException
 import timber.log.Timber
 
 /**
- * BCMProject
+ * Kurly
  * Class: Error
- * Created by 박수연 on 2021-04-19.
+ * Created by bluepark on 2022/12/13.
  *
- * Description: 서버 return시 Error 처리
+ * Description:
  */
 
 enum class E_API_CODE constructor(val code: Int) {

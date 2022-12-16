@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="android.graphics.Typeface" />
+
+        <variable
+            name="product"
+            type="com.example.kurly.data.Product" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/iv_product"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:setUri="@{product.image}" />
+
+        <ImageView
+            android:id="@+id/iv_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:src="@drawable/ic_btn_heart_off"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@{product.name}"
+            app:layout_constraintLeft_toLeftOf="@id/iv_product"
+            app:layout_constraintRight_toRightOf="@id/iv_product"
+            app:layout_constraintTop_toBottomOf="@id/iv_product" />
+
+        <TextView
+            android:id="@+id/tv_discount_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{product.discountPercent}"
+            android:textColor="@color/col_fa622f"
+            android:layout_marginRight="5dp"
+            android:visibility="@{(product.discountedPrice > 0) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/tv_price"
+            app:layout_constraintTop_toBottomOf="@id/tv_name" />
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:formatMoney="@{(product.discountedPrice > 0) ? product.discountedPrice : product.originalPrice}"
+            app:layout_constraintLeft_toRightOf="@id/tv_discount_percent"
+            app:layout_constraintTop_toBottomOf="@id/tv_name" />
+
+        <TextView
+            android:id="@+id/tv_origin_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/col_999999"
+            app:formatMoney="@{product.originalPrice}"
+            android:visibility="@{(product.discountedPrice > 0) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_price"
+            app:textStrike="@{true}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,24 +1,52 @@
 package com.example.kurly.data.source
 
-import android.content.Context
+import com.example.kurly.data.ProductInfo
 import com.example.kurly.data.Result
-import com.example.kurly.data.Section
+import com.example.kurly.data.SectionInfo
+import com.example.kurly.data.getDiscountPercent
+import com.example.kurly.data.remote.RemoteDataSource
 
 
 /**
- * BCMProject
+ * Kurly
  * Class: DefaultRepository
- * Created by 박수연 on 2021-04-16.
+ * Created by bluepark on 2022/12/13.
  *
- * Description: 총 데이터 관리 Class(ViewModel 쪽에서 호출하면 접근 하게되는 Class)
+ * Description:
  */
 
 class DefaultRepository constructor(
-    private val applicationContext: Context,
     private val remoteDataSource: RemoteDataSource
 ) : Repository {
 
-    override suspend fun getSections(page: Int): Result<Section> =
-        remoteDataSource.getSections(page)
+    override suspend fun getSections(page: Int): SectionInfo? {
 
+        remoteDataSource.getSections(page).run {
+            if (this is Result.Success) {
+                this.data.sectionList?.map {
+                    it.id?.let { id ->
+                        remoteDataSource.getSectionProducts(id).run {
+                            if (this is Result.Success) {
+                                this.data.productList?.map { product ->
+                                    product.discountPercent = getDiscountPercent(
+                                        product.originalPrice ?: 0,
+                                        product.discountedPrice ?: 0
+                                    )
+                                }
+
+                                it.products = this.data.productList
+                            }
+                        }
+                    }
+                }
+
+                return this.data
+            }
+        }
+
+        return null
+    }
+
+    override suspend fun getSectionProducts(sectionId: Int): Result<ProductInfo> =
+        remoteDataSource.getSectionProducts(sectionId)
 }

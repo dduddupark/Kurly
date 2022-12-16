@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Kurly</string>
     <string name="base_url">https://kurly.com/</string>
+
+    <string name="str_price">%s원</string>
 </resources>

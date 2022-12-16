@@ -15,9 +15,9 @@
  */
 package com.example.kurly.data.remote
 
+import com.example.kurly.data.ProductInfo
 import com.example.kurly.data.Result
-import com.example.kurly.data.Section
-import com.example.kurly.data.source.RemoteDataSource
+import com.example.kurly.data.SectionInfo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -30,14 +30,23 @@ class NetworkDataSource internal constructor(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : RemoteDataSource {
 
-    override suspend fun getSections(page: Int): Result<Section> =
+    override suspend fun getSections(page: Int): Result<SectionInfo> =
         withContext(ioDispatcher) {
             try {
-                val response = networkService.getEvaluationYN(page)
+                val response = networkService.getSections(page)
                 return@withContext Result.Success(response)
             } catch (e: Exception) {
                 return@withContext Result.Error(e)
             }
         }
 
+    override suspend fun getSectionProducts(sectionId: Int): Result<ProductInfo> =
+        withContext(ioDispatcher) {
+            try {
+                val response = networkService.getSectionProducts(sectionId)
+                return@withContext Result.Success(response)
+            } catch (e: Exception) {
+                return@withContext Result.Error(e)
+            }
+        }
 }

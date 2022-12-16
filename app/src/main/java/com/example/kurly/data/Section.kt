@@ -13,18 +13,19 @@ enum class SectionType constructor(val type: String) {
     Vertical("vertical"), Horizontal("horizontal"), Grid("grid")
 }
 
-data class Section(
+data class SectionInfo(
     @SerializedName("data")
-    val sectionInfo: List<SectionInfo>? = null,
+    val sectionList: List<Section>? = null,
     @SerializedName("paging")
     val page: Page? = null,
 )
 
-data class SectionInfo(
+data class Section(
     val title: String? = "",
     val id: Int? = 0,
     val type: String? = "",
     val url: String? = "",
+    var products: List<Product>? = null
 )
 
 data class Page(
