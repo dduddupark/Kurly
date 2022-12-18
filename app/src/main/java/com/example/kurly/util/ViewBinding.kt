@@ -1,14 +1,13 @@
 package com.example.kurly.util
 
 import android.graphics.Paint
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.kurly.R
+import com.example.kurly.ui.BaseAdapter
 import java.text.DecimalFormat
 
 /**
@@ -53,16 +52,13 @@ object RecyclerBinding {
     @BindingAdapter("android:recyclerViewAdapter", "android:items")
     fun bindItem(
         recyclerView: RecyclerView,
-        adapter: ListAdapter<Any, Nothing>?,
+        adapter: BaseAdapter,
         dataList: List<Any>?
     ) {
         if (recyclerView.adapter == null) {
             recyclerView.adapter = adapter
         }
-        Log.d("bindItem", "adapter = $adapter")
-        Log.d("bindItem", "dataList = $dataList")
-        dataList?.let {
-            adapter?.submitList(dataList as List<Any>?)
-        }
+
+        adapter.setData(dataList)
     }
 }

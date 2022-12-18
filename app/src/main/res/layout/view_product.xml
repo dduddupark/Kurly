@@ -14,7 +14,7 @@
 
         <variable
             name="productAdapter"
-            type="com.example.kurly.ui.ProductAdapter" />
+            type="com.example.kurly.ui.BaseAdapter" />
 
         <variable
             name="typeLayoutManager"

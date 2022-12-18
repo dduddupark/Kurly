@@ -32,7 +32,7 @@
             android:layout_margin="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_btn_heart_off"
+            android:src="@{product.isLike ? @drawable/ic_btn_heart_on : @drawable/ic_btn_heart_off}"
             app:layout_constraintRight_toRightOf="@id/iv_product"
             app:layout_constraintTop_toTopOf="@id/iv_product" />
 

@@ -1,7 +1,9 @@
 package com.example.kurly.data
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import timber.log.Timber
 
 /**
  * Kurly
@@ -15,25 +17,23 @@ data class ProductInfo(
     val productList: List<Product>? = null
 )
 
+@Entity
 data class Product(
-    val id: Int? = 0,
+    @PrimaryKey val id: Int? = 0,
     val name: String? = "",
     val image: String? = "",
     val originalPrice: Int? = 0,
     val discountedPrice: Int? = 0,
     val isSoldOut: Boolean? = false,
-    var discountPercent: String? = ""
+    var discountPercent: String? = "",
+    @ColumnInfo var isLike: Boolean = false
 )
 
 fun getDiscountPercent(originalPrice: Int, discountedPrice: Int): String {
     return if (originalPrice > 0 && discountedPrice > 0) {
-        val p =
-            (100 - ((discountedPrice.toDouble() / originalPrice.toDouble()) * 100).toInt()).toString()
-                .plus("%")
-        Timber.d(p)
-        p
+        (100 - ((discountedPrice.toDouble() / originalPrice.toDouble()) * 100).toInt()).toString()
+            .plus("%")
     } else {
-        Timber.d("else")
         ""
     }
 }

@@ -2,9 +2,12 @@ package com.example.kurly.ui
 
 import androidx.lifecycle.*
 import com.example.kurly.data.Event
+import com.example.kurly.data.Product
 import com.example.kurly.data.SectionInfo
 import com.example.kurly.data.source.DefaultRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -18,21 +21,28 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val retrofit: DefaultRepository
+    private val repository: DefaultRepository
 ) : ViewModel() {
 
-    private val _sectionInfo = MutableLiveData<SectionInfo>()
-    val sectionInfo: LiveData<SectionInfo> = _sectionInfo
+    val productLikeList = repository.allProducts.asLiveData()
+
+    var itemClickPosition = 0
+
+    private val _sectionList = MutableLiveData<Event<SectionInfo>>()
+    val sectionList: LiveData<Event<SectionInfo>> = _sectionList
 
     private val _loading = MutableLiveData<Event<Boolean>>()
-    val loading: LiveData<Boolean?> = _loading.map { event: Event<Boolean>? ->
-        event?.getContentIfNotHandled()
+    val loading: LiveData<Event<Boolean>> = _loading
+
+    fun updateProductLike(position: Int, product: Product) = CoroutineScope(Dispatchers.IO).launch {
+        itemClickPosition = position
+        product.isLike = !product.isLike
+        repository.updateProductLike(product)
     }
 
     fun canNextPage(page: Int): Boolean {
         var canNext = false
-        Timber.d("page = ${sectionInfo.value?.page?.nextPage}")
-        sectionInfo.value?.page?.nextPage?.let {
+        sectionList.value?.peekContent()?.page?.nextPage?.let {
             Timber.d("it = $it, page = $page")
             if (page <= it) {
                 canNext = true
@@ -45,10 +55,10 @@ class MainViewModel @Inject constructor(
         _loading.value = Event(true)
 
         viewModelScope.launch {
-            retrofit.getSections(page).run {
+            repository.getSections(page).run {
                 _loading.value = Event(false)
                 this?.let {
-                    _sectionInfo.value = it
+                    _sectionList.value = Event(it)
                 }
             }
         }

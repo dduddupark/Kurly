@@ -1,8 +1,11 @@
 package com.example.kurly.data.source
 
 import android.content.Context
+import androidx.room.Room
 import com.example.kurly.BuildConfig
 import com.example.kurly.R
+import com.example.kurly.data.local.AppDatabase
+import com.example.kurly.data.local.ProductDao
 import com.example.kurly.data.remote.NetworkDataSource
 import com.example.kurly.data.remote.NetworkService
 import com.example.kurly.data.remote.RemoteDataSource
@@ -37,19 +40,32 @@ import javax.net.ssl.X509TrustManager
  *
  * Description:
  */
-
 @InstallIn(SingletonComponent::class)
 @Module
-class NetworkModule {
+class RepositoryModule {
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(
+        @ApplicationContext applicationContext: Context
+    ): AppDatabase {
+        return Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "product-database"
+        ).build()
+    }
+
+    @Provides
+    fun provideProductDao(appDatabase: AppDatabase) = appDatabase.productDao()
 
     @Provides
     @Singleton
     fun provideDefaultRepository(
+        productDao: ProductDao,
         remoteDataSource: RemoteDataSource
     ): DefaultRepository {
-        val repository = DefaultRepository(remoteDataSource)
-        Timber.d("hrepository = $repository")
-        return repository
+        return DefaultRepository(productDao, remoteDataSource)
     }
 
     @Provides

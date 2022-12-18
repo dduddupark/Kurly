@@ -8,10 +8,10 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kurly.R
+import com.example.kurly.data.Product
 import com.example.kurly.data.Section
 import com.example.kurly.data.SectionType
 import com.example.kurly.databinding.ViewProductBinding
-import timber.log.Timber
 
 /**
  * Kurly
@@ -29,31 +29,46 @@ class ProductView @JvmOverloads constructor(
     init {
         val mInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = mInflater.inflate(R.layout.view_product, this, false)
-        viewDataBinding = ViewProductBinding.bind(view)
+        viewDataBinding = ViewProductBinding.bind(view).apply {
+            this.rvList.apply {
+                itemAnimator = null
+            }
+        }
         addView(viewDataBinding.root)
     }
 
-    fun setData(section: Section) {
+    fun updateView(itemClickPosition: Int) {
+        (viewDataBinding.productAdapter as ProductRecyclerAdapter).run {
+            this.notifyItem(itemClickPosition)
+        }
+    }
+
+    fun setData(section: Section, listener: ItemClickListener?) {
 
         viewDataBinding.section = section
 
         when (section.type) {
             SectionType.Grid.type -> {
-                Timber.d("Grid")
                 viewDataBinding.typeLayoutManager = GridLayoutManager(context, 2)
             }
             SectionType.Vertical.type -> {
-                Timber.d("Vertical")
                 viewDataBinding.typeLayoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             }
             SectionType.Horizontal.type -> {
-                Timber.d("Horizontal")
                 viewDataBinding.typeLayoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             }
         }
 
-        viewDataBinding.productAdapter = ProductAdapter(section.type ?: "")
+        val adapter = ProductRecyclerAdapter(section.type ?: "").apply {
+            this.setItemClickListener(object : ItemClickListener {
+                override fun itemClick(position: Int, product: Product) {
+                    listener?.itemClick(position, product)
+                }
+            })
+        }
+        viewDataBinding.productAdapter = adapter
+
     }
 }
